@@ -3,6 +3,7 @@ using DotnetTutorialWebapiTodoItems.DTOs;
 using DotnetTutorialWebapiTodoItems.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace DotnetTutorialWebapiTodoItems.Controllers
 {
@@ -11,10 +12,12 @@ namespace DotnetTutorialWebapiTodoItems.Controllers
   public class TodoItemsController : ControllerBase
   {
     private readonly TodoContext _context;
+    private readonly ExecutionOptionsDTO _executionOptions;
 
-    public TodoItemsController(TodoContext context)
+    public TodoItemsController(TodoContext context, IOptions<ExecutionOptionsDTO> executionOptions)
     {
       _context = context;
+      _executionOptions = executionOptions.Value;
     }
 
     // GET: api/TodoItems
@@ -43,16 +46,12 @@ namespace DotnetTutorialWebapiTodoItems.Controllers
     [HttpPut("{id}")]
     public async Task<IActionResult> PutTodoItem(long id, TodoItemDTO todoItemDTO)
     {
-      if (id != todoItemDTO.Id)
-      {
-        return BadRequest();
-      }
+      if (IsReadOnlyExecution()) return UnprocessableEntity();
+
+      if (id != todoItemDTO.Id) return BadRequest();
 
       var todoItem = await _context.TodoItems.FindAsync(id);
-      if (todoItem == null)
-      {
-        return NotFound();
-      }
+      if (todoItem == null) return NotFound();
 
       todoItem.Name = todoItemDTO.Name;
       todoItem.IsComplete = todoItemDTO.IsComplete;
@@ -74,6 +73,8 @@ namespace DotnetTutorialWebapiTodoItems.Controllers
     [HttpPost]
     public async Task<ActionResult<TodoItemDTO>> PostTodoItem(TodoItemDTO todoItemDTO)
     {
+      if (IsReadOnlyExecution()) return UnprocessableEntity();
+
       var todoItem = new TodoItem
       {
         Name = todoItemDTO.Name,
@@ -90,11 +91,10 @@ namespace DotnetTutorialWebapiTodoItems.Controllers
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteTodoItem(long id)
     {
+      if (IsReadOnlyExecution()) return UnprocessableEntity();
+
       var todoItem = await _context.TodoItems.FindAsync(id);
-      if (todoItem == null)
-      {
-        return NotFound();
-      }
+      if (todoItem == null) return NotFound();
 
       _context.TodoItems.Remove(todoItem);
       await _context.SaveChangesAsync();
@@ -105,6 +105,11 @@ namespace DotnetTutorialWebapiTodoItems.Controllers
     private bool TodoItemExists(long id)
     {
       return _context.TodoItems.Any(e => e.Id == id);
+    }
+
+    private bool IsReadOnlyExecution()
+    {
+      return _executionOptions.ReadOnly;
     }
   }
 }

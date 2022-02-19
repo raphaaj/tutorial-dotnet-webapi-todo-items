@@ -3,4 +3,5 @@ obj
 .vscode
 .git
 .gitignore
+*.env
 *.md

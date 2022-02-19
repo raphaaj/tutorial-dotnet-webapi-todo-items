@@ -1,7 +1,14 @@
+using DotnetTutorialWebapiTodoItems.DTOs;
 using DotnetTutorialWebapiTodoItems.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Setup custom environment variables
+builder.Configuration.AddEnvironmentVariables(prefix: "TODOITEMSAPI_");
+builder.Services.Configure<ExecutionOptionsDTO>(
+  builder.Configuration.GetSection(ExecutionOptionsDTO.Execution)
+);
 
 // Add services to the container.
 builder.Services.AddControllers();
