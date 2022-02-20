@@ -23,6 +23,6 @@ Tutorial: [Create a web API with controllers](https://docs.microsoft.com/en-us/a
 
 1. Create and run the docker container:
 
-    `docker run --name my-app -dp 5000:80 --env-file ./.env dotnet-tutorial-webapi-todo-items`
+    `docker run --name {APP_NAME} -dp {PORT}:80 --env-file ./.env dotnet-tutorial-webapi-todo-items`
 
-1. Checkout the [todo items api](http://localhost:5000/api/todoitems)
+2. Checkout the todo items api at `/api/todoitems`

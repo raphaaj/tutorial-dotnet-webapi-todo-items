@@ -10,6 +10,10 @@ builder.Services.Configure<ExecutionOptionsDTO>(
   builder.Configuration.GetSection(ExecutionOptionsDTO.Execution)
 );
 
+// Setup logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
