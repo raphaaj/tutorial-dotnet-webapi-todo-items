@@ -6,23 +6,28 @@ Tutorial: [Create a web API with controllers](https://docs.microsoft.com/en-us/a
 
 1. Trust the HTTP development certificate:
 
-    `dotnet dev-certs https --trust`
-
+   `dotnet dev-certs https --trust`
 
 ## Docker Setup
 
 1. Build the docker image:
 
-    `docker build -t dotnet-tutorial-webapi-todo-items .`
+   `docker build -t dotnet-tutorial-webapi-todo-items .`
 
 1. Create a `.env` file with the required environment variables:
 
-    ```
-    TODOITEMSAPI_Execution__ReadOnly=false
-    ```
+   ```
+   TODOITEMSAPI_Execution__ReadOnly=false
+   ```
 
-1. Create and run the docker container:
+1. Deploy the app
 
-    `docker run --name {APP_NAME} -dp {PORT}:80 --env-file ./.env dotnet-tutorial-webapi-todo-items`
+   1. As a docker container:
 
-2. Checkout the todo items api at `/api/todoitems`
+      `docker run --name {APP_NAME} -dp {PORT}:80 --env-file ./.env dotnet-tutorial-webapi-todo-items`
+
+   1. As a docker swarm service on a manager node:
+
+      `docker service create --name {SERVICE_NAME} -p {PORT}:80 --env-file ./.env --replicas {NUMBER_OF_REPLICAS} dotnet-tutorial-webapi-todo-items`
+
+1. Checkout the todo items api at `/api/todoitems`
